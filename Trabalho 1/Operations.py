@@ -4,12 +4,13 @@ import matplotlib.pyplot as plt
 
 class Operations:
 
-    def __init__(self, image):
+    def __init__(self, image, name_file):
         # Check if the image has only two channels
         if len(image.shape) == 3:
             self.image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         elif len(image.shape) == 2:
             self.image = image
+        self.name_file = name_file[:-4]
         self.kernel = []
         self.kernel_size = 0
         self.pad = 0
@@ -65,7 +66,8 @@ class Operations:
                     # Region of interest (roi)
                     roi = image_border[i - pad:i + pad + 1, j - pad:j + pad + 1]
                     aux = (roi * self.kernel).sum()
-                    output[i - pad, j - pad] = np.floor(aux)
+                    #output[i - pad, j - pad] = np.floor(aux)
+                    output[i - pad, j - pad] = (aux)
             output = np.uint8(output)
             #output = output.astype(np.uint16)
             image_aux = np.copy(output)
@@ -81,13 +83,25 @@ class Operations:
         return img_bin, media
     
     def threshold(self, T):
-        img_bin = ((self.image > T) * 255).astype('uint8')
-        self.plotResult(img_bin, 'Threshold: {}'.format(T))
+        image_bin = ((self.image > T) * 255).astype('uint8')
+        #self.plotResult(image_bin, 'Threshold: {}'.format(T))
+        #cv2.imwrite('./Results/{}-threshold-{}.png'.format(self.name_file, T), image_bin)
+
+    def multiThreshold(self, T1, T2):
+        image_bin1 = (self.image <= T1) * 0
+        image_bin2 = ((self.image > T1) & (self.image < T2)) * 128
+        image_bin3 = (self.image >= T2) * 255
+        image_result = (image_bin1 + image_bin2 + image_bin3).astype('uint8')
+
+        #self.plotResult(image_result, 'Multi Threshold')
+        #cv2.imwrite('./Results/{}-multiThreshold-{}-{}.png'.format(self.name_file, T1, T2), image_result)
+
 
     def otsu(self):
         threshold_otsu, image_result = cv2.threshold(self.image, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
         #self.threshold(threshold_otsu)
         self.plotResult(image_result, 'Otsu')
+        #cv2.imwrite('./Results/image-otsu.png', image_result)
     
     def plotResult(self, result, title):
         fig = plt.figure(figsize=(9,3), dpi=80)
