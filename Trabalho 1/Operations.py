@@ -11,44 +11,54 @@ class Operations:
         elif len(image.shape) == 2:
             self.image = image
         self.name_file = name_file[:-4]
-        self.kernel = []
-        self.kernel_size = 0
-        self.pad = 0
-        self.kernel_type = ''
-        self.iterations = 0
 
     def initKernel(self):
         if self.kernel_type == 'mean':
             n = self.kernel_size
             self.kernel = (1.0/(n*n)) * np.ones((n, n))
+        if self.kernel_type == 'median':
+            n = self.kernel_size
+            self.kernel = np.ones((n, n))
         elif self.kernel_type == 'gaussian':
             k = self.kernel_size
             aux = cv2.getGaussianKernel(ksize=k,sigma=1)
             self.kernel = aux @ aux.T
         elif self.kernel_type == 'laplacian':
-            self.kernel = np.array(([1, 1, 1], 
-                                    [1, -8, 1], 
-                                    [1, 1, 1]), dtype='float')
-        elif self.kernel_type == 'sharpen':
+            self.kernel_size = 3
             self.kernel = np.array(([0, -1, 0], 
-                                    [-1, 5, -1], 
+                                    [-1, 4, -1], 
                                     [0, -1, 0]), dtype='float')
         elif self.kernel_type == 'sobelX':
+            self.kernel_size = 3
             self.kernel = np.array(([-1, 0, 1], 
                                     [-2, 0, 2], 
                                     [-1, 0, 1]), dtype='float')
         elif self.kernel_type == 'sobelY':
+            self.kernel_size = 3
             self.kernel = np.array(([-1, -2, -1], 
                                     [0, 0, 0], 
                                     [1, 2, 1]), dtype='float')
+        elif self.kernel_type == 'prewittX':
+            self.kernel_size = 3
+            self.kernel = np.array(([-1, 0, 1], 
+                                    [-1, 0, 1], 
+                                    [-1, 0, 1]), dtype='float')
+        elif self.kernel_type == 'prewittY':
+            self.kernel_size = 3
+            self.kernel = np.array(([-1, -1, -1], 
+                                    [0, 0, 0], 
+                                    [1, 1, 1]), dtype='float')
         else:
             print('Erro, kernel type is not defined!\n')
 
-    def convolve(self, kernel_size, kernel_type, iterations):
+    def convolve(self, kernel_size, kernel_type, iterations=None):
         self.kernel_size = kernel_size
         self.pad = int(kernel_size/2)
         self.kernel_type = kernel_type
-        self.iterations = iterations
+        if iterations == None:
+            self.iterations = 1
+        else:
+            self.iterations = iterations
         self.initKernel()
         
         (iH, iW) = self.image.shape
@@ -66,10 +76,41 @@ class Operations:
                     # Region of interest (roi)
                     roi = image_border[i - pad:i + pad + 1, j - pad:j + pad + 1]
                     aux = (roi * self.kernel).sum()
-                    #output[i - pad, j - pad] = np.floor(aux)
-                    output[i - pad, j - pad] = (aux)
+                    aux = np.floor(np.maximum(aux, 0))
+                    output[i - pad, j - pad] = aux
             output = np.uint8(output)
-            #output = output.astype(np.uint16)
+            image_aux = np.copy(output)
+
+        self.plotResult(output, self.kernel_type)
+        return output
+    
+    def convolveMedian(self, kernel_size, kernel_type, iterations=None):
+        self.kernel_size = kernel_size
+        self.pad = int(kernel_size/2)
+        self.kernel_type = kernel_type
+        if iterations == None:
+            self.iterations = 1
+        else:
+            self.iterations = iterations
+        self.initKernel()
+        
+        (iH, iW) = self.image.shape
+        pad = self.pad
+
+        image_aux = np.copy(self.image)
+        for _ in range(self.iterations):
+            # Making border for image (Padding)
+            image_border = np.zeros((pad+iH+pad, pad+iW+pad))
+            image_border[pad:-pad, pad:-pad] = image_aux
+
+            output = np.zeros((iH, iW))
+            for i in range(pad, iH + pad):
+                for j in range(pad, iW + pad):
+                    # Region of interest (roi)
+                    roi = image_border[i - pad:i + pad + 1, j - pad:j + pad + 1]
+                    aux = np.median(roi * self.kernel)
+                    output[i - pad, j - pad] = aux
+            output = np.uint8(output)
             image_aux = np.copy(output)
 
         self.plotResult(output, self.kernel_type)
@@ -77,13 +118,13 @@ class Operations:
 
     def thresholdMean(self):
         media = np.mean(self.image)
-        img_bin = ((self.image > media) * 255).astype('uint8')
+        img_bin = ((self.image >= media) * 255).astype('uint8')
         
         self.plotResult(img_bin, 'Binary')
         return img_bin, media
     
     def threshold(self, T):
-        image_bin = ((self.image > T) * 255).astype('uint8')
+        image_bin = ((self.image >= T) * 255).astype('uint8')
         #self.plotResult(image_bin, 'Threshold: {}'.format(T))
         #cv2.imwrite('./Results/{}-threshold-{}.png'.format(self.name_file, T), image_bin)
 
