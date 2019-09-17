@@ -8,14 +8,15 @@ from Operations import Operations
 path = '../Images/'
 name_file = 'cameraman.png'
 image = cv2.imread(path+name_file)
-
 model = Operations(image, name_file)
-image_r = model.convolve(kernel_size=3, kernel_type='sobelX', iterations=1)
+
+#image_r = model.convolve(kernel_size=3, kernel_type='sobelX', iterations=1)
 #cv2.imwrite('./Results/cameraman.png', image_r)
 
 #model.otsu()
 #model.threshold(150)
 #model.multiThreshold(150, 170)
+#model.histogram()
 
 #gx = model.convolve(kernel_size=3, kernel_type='prewittX', iterations=1)
 #gy = model.convolve(kernel_size=3, kernel_type='prewittY', iterations=1)

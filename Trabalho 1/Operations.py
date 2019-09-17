@@ -137,7 +137,6 @@ class Operations:
         #self.plotResult(image_result, 'Multi Threshold')
         #cv2.imwrite('./Results/{}-multiThreshold-{}-{}.png'.format(self.name_file, T1, T2), image_result)
 
-
     def otsu(self):
         threshold_otsu, image_result = cv2.threshold(self.image, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
         #self.threshold(threshold_otsu)
@@ -175,3 +174,34 @@ class Operations:
         a.hist(self.image.ravel(), bins=128, normed=True, edgecolor='none', histtype='stepfilled')
         plt.tight_layout()
         plt.show()
+
+    def histogram(self):
+        x = [i for i in range(1,256)]
+        y = [np.sum(self.image == i) for i in x]
+        
+        p1 = plt.bar(x, y, 0.5)
+        plt.ylabel('Grey scale')
+        plt.xlabel('Pixel')
+        plt.title('Histogram')
+        #plt.savefig('./Results/{}-histogram.png'.format(self.name_file), bbox_inches='tight')
+        plt.show()
+    
+    def EqHistogram(self):
+        x = [i for i in range(1,256)]
+        y = [np.sum(self.image == i) for i in x]
+        #max_ = np.max(self.image)
+        max_ = 256
+
+        (m, n) = self.image.shape
+        img = np.zeros((m, n))
+        mn = m*n
+
+        for i in range(m):
+            for j in range(n):
+                r = self.image[i,j]
+                T = ((max_ - 1)/mn) * sum(y[0:r])
+                img[i,j] = np.floor(T)
+
+        img = np.uint8(img)
+        #cv2.imwrite('./Results/{}-EqHistogram.png'.format(self.name_file), img)
+        self.plotResult(img, 'EqHistogram')
