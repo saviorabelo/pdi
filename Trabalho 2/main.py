@@ -6,9 +6,10 @@ from Operations import Operations
 
 # Load image
 path = '../Images/'
-name_file = 'cameraman.png'
+name_file = 'leaf.jpg'
 image = cv2.imread(path+name_file)
 
 model = Operations(image, name_file)
-model.iterativeMean()
+#model.iterativeMean()
+model.watershed()
 
