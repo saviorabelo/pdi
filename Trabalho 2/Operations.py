@@ -15,6 +15,30 @@ class Operations:
             self.image = image
         self.name_file = name_file[:-4]
 
+    def translation(self):
+        rows, cols = self.image.shape
+
+        M = np.float32([[1,0,100],[0,1,50]])
+        trans = cv2.warpAffine(self.image, M, (cols, rows))
+
+        self.plotResult(trans, 'Translation')
+    
+    def scaling(self):
+        rows, cols = self.image.shape
+        sca = cv2.resize(self.image, (2*cols, 2*rows), interpolation = cv2.INTER_CUBIC)
+
+        self.plotResult(sca, 'Scaling')
+        cv2.imwrite('./Results/{}-scaling.png'.format(self.name_file), sca)
+    
+    def rotation(self):
+        rows, cols = self.image.shape
+
+        M = cv2.getRotationMatrix2D((cols/2, rows/2), 90, 1)
+        rot = cv2.warpAffine(self.image, M, (cols, rows))
+
+        self.plotResult(rot, 'Rotation')
+        #cv2.imwrite('./Results/{}-rotation.png'.format(self.name_file), rot)
+    
     def iterativeMean(self):
         img = self.image
         mean_initial = np.mean(img)

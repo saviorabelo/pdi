@@ -9,7 +9,14 @@ name_file = '3303_lg.tiff'
 image = cv2.imread(path+name_file)
 
 model = Operations(image, name_file)
+#model.translation()
+#model.scaling()
+model.rotation()
+
+
+
+
 #model.iterativeMean()
 #model.watershed()
-model.regionGrowth()
+#model.regionGrowth()
 
