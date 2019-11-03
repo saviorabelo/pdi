@@ -14,9 +14,12 @@ model = Operations(image, name_file)
 #model.rotation()
 #model.dilation()
 #model.erosion()
+model.morphologicalGradient()
 #model.kmeans()
 #model.wavelet()
-model.fourier()
+#model.fourier()
+
+
 
 #model.iterativeMean()
 #model.watershed()

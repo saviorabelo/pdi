@@ -42,8 +42,8 @@ class Operations:
     
     def dilation(self):
         image = self.image
-        se = ball(5)
-        dil = morphology.dilation(image, se) - image
+        se = disk(5)
+        dil = morphology.dilation(image, se)
 
         self.plotResult(dil, 'Dilation')
         #cv2.imwrite('./Results/{}-dilation.png'.format(self.name_file), dil)
@@ -51,11 +51,29 @@ class Operations:
     def erosion(self):
         image = self.image
         se = disk(5)
-        ero = morphology.erosion(image, se) - image
+        ero = morphology.erosion(image, se)
 
         self.plotResult(ero, 'Erosion')
         #cv2.imwrite('./Results/{}-erosion.png'.format(self.name_file), ero)
-    
+
+    def morphologicalGradient(self):
+        image = self.image
+
+        se = disk(5)
+        dil = morphology.dilation(image, se)
+        ero = morphology.erosion(image, se)
+        mg = dil - ero
+        self.plotResult(mg, 'Morphological Gradient')
+        #cv2.imwrite('./Results/{}-gradient.png'.format(self.name_file), mg)
+
+        internal = image - ero
+        self.plotResult(internal, 'Internal Gradient')
+        #cv2.imwrite('./Results/{}-internal.png'.format(self.name_file), internal)
+
+        external = dil - image
+        self.plotResult(external, 'External Gradient')
+        #cv2.imwrite('./Results/{}-external.png'.format(self.name_file), external)
+
     def kmeans(self):
         img = self.image
         Z = img.reshape((-1,2))
