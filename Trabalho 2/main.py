@@ -15,8 +15,8 @@ model = Operations(image, name_file)
 #model.dilation()
 #model.erosion()
 #model.kmeans()
-model.wavelet()
-
+#model.wavelet()
+model.fourier()
 
 #model.iterativeMean()
 #model.watershed()

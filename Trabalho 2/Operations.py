@@ -4,7 +4,7 @@ import numpy as np
 from collections import deque
 from skimage import morphology
 import matplotlib.pyplot as plt
-from skimage.morphology import disk, cube, diamond, rectangle, square, ball, star
+from skimage.morphology import disk, square, cube, diamond, rectangle, ball, star
 
 class Operations:
 
@@ -76,24 +76,37 @@ class Operations:
         img_haar = pywt.dwt2(self.image, 'haar')
         cA, (cH, cV, cD) = img_haar
 
-        plt.figure(1, figsize=(9,9))
+        plt.figure(figsize=(9,9))
 
         plt.subplot(221)
         plt.imshow(cA, 'gray')
-        plt.title('Imagem original')
+        plt.title('Original')
         plt.subplot(222)
         plt.imshow(cH, 'gray')
-        plt.title('Imagem horizontais')
+        plt.title('Horizontais')
         plt.subplot(223)
         plt.imshow(cV, 'gray')
-        plt.title('Imagem verticais')
+        plt.title('Verticais')
         plt.subplot(224)
         plt.imshow(cD, 'gray')
-        plt.title('Imagem diagonais')
+        plt.title('Diagonais')
         plt.show()
     
     def fourier(self):
-        pass
+        img = self.image
+        rows, cols = img.shape
+        img_dft = np.fft.fft2(img)
+        img_dft_shift = np.fft.fftshift(img_dft)
+        img_dft_mag = np.abs(img_dft_shift)
+
+        self.plotResult(np.log(img_dft_mag), 'Espectro em frequência')
+
+        img_idft = np.fft.ifft2(img_dft)
+        img_inversa = np.abs(img_idft)
+
+        self.plotResult(img_inversa, 'Imagem após IDFT')
+
+        #cv2.imwrite('./Results/{}-kmeans.png'.format(self.name_file), result)
 
     def iterativeMean(self):
         img = self.image
