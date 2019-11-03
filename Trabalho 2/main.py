@@ -11,9 +11,10 @@ image = cv2.imread(path+name_file)
 model = Operations(image, name_file)
 #model.translation()
 #model.scaling()
-model.rotation()
-
-
+#model.rotation()
+#model.dilation()
+#model.erosion()
+model.kmeans()
 
 
 #model.iterativeMean()

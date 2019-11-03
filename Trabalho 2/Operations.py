@@ -3,7 +3,7 @@ import numpy as np
 from collections import deque
 from skimage import morphology
 import matplotlib.pyplot as plt
-from skimage.morphology import disk
+from skimage.morphology import disk, cube, diamond, rectangle, square, ball, star
 
 class Operations:
 
@@ -39,6 +39,39 @@ class Operations:
         self.plotResult(rot, 'Rotation')
         #cv2.imwrite('./Results/{}-rotation.png'.format(self.name_file), rot)
     
+    def dilation(self):
+        image = self.image
+        se = ball(5)
+        dil = morphology.dilation(image, se) - image
+
+        self.plotResult(dil, 'Dilation')
+        #cv2.imwrite('./Results/{}-dilation.png'.format(self.name_file), dil)
+    
+    def erosion(self):
+        image = self.image
+        se = disk(5)
+        ero = morphology.erosion(image, se) - image
+
+        self.plotResult(ero, 'Erosion')
+        #cv2.imwrite('./Results/{}-erosion.png'.format(self.name_file), ero)
+    
+    def kmeans(self):
+        img = self.image
+        Z = img.reshape((-1,2))
+        Z = np.float32(Z)
+
+        K = 2
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+        _, label, center = cv2.kmeans(Z, K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+
+        # Now convert back into uint8, and make original image
+        center = np.uint8(center)
+        aux = center[label.flatten()]
+        result = aux.reshape((img.shape))
+
+        self.plotResult(result, 'Kmeans (K={})'.format(K))
+        #cv2.imwrite('./Results/{}-kmeans.png'.format(self.name_file), result)
+
     def iterativeMean(self):
         img = self.image
         mean_initial = np.mean(img)
