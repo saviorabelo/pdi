@@ -1,4 +1,5 @@
 import cv2
+import pywt
 import numpy as np
 from collections import deque
 from skimage import morphology
@@ -63,7 +64,6 @@ class Operations:
         K = 2
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
         _, label, center = cv2.kmeans(Z, K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
-
         # Now convert back into uint8, and make original image
         center = np.uint8(center)
         aux = center[label.flatten()]
@@ -71,6 +71,29 @@ class Operations:
 
         self.plotResult(result, 'Kmeans (K={})'.format(K))
         #cv2.imwrite('./Results/{}-kmeans.png'.format(self.name_file), result)
+    
+    def wavelet(self):
+        img_haar = pywt.dwt2(self.image, 'haar')
+        cA, (cH, cV, cD) = img_haar
+
+        plt.figure(1, figsize=(9,9))
+
+        plt.subplot(221)
+        plt.imshow(cA, 'gray')
+        plt.title('Imagem original')
+        plt.subplot(222)
+        plt.imshow(cH, 'gray')
+        plt.title('Imagem horizontais')
+        plt.subplot(223)
+        plt.imshow(cV, 'gray')
+        plt.title('Imagem verticais')
+        plt.subplot(224)
+        plt.imshow(cD, 'gray')
+        plt.title('Imagem diagonais')
+        plt.show()
+    
+    def fourier(self):
+        pass
 
     def iterativeMean(self):
         img = self.image

@@ -14,7 +14,8 @@ model = Operations(image, name_file)
 #model.rotation()
 #model.dilation()
 #model.erosion()
-model.kmeans()
+#model.kmeans()
+model.wavelet()
 
 
 #model.iterativeMean()
