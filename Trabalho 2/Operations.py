@@ -74,6 +74,49 @@ class Operations:
         self.plotResult(external, 'External Gradient')
         #cv2.imwrite('./Results/{}-external.png'.format(self.name_file), external)
 
+    def houghCircles(self):
+        img = self.image
+        cimg = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+
+        circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 1, 20,
+                                    param1=50, param2=30, minRadius=0, maxRadius=40)
+
+        circles = np.uint16(np.around(circles))
+        for i in circles[0,:]:
+            # draw the outer circle
+            cv2.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+            # draw the center of the circle
+            cv2.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
+
+        cv2.imshow('Detected Circles',cimg)
+        #cv2.imwrite('./Results/{}-houghCircles.png'.format(self.name_file), cimg)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    def houghLines(self):
+        dst = cv2.Canny(self.image, 50, 200, None, 3)
+    
+        # Copy edges to the images that will display the results in BGR
+        cdst = cv2.cvtColor(dst, cv2.COLOR_GRAY2BGR)
+        lines = cv2.HoughLines(dst, 1, np.pi / 180, 150, None, 0, 0)
+    
+        if lines is not None:
+            for i in range(0, len(lines)):
+                rho = lines[i][0][0]
+                theta = lines[i][0][1]
+                a = math.cos(theta)
+                b = math.sin(theta)
+                x0 = a * rho
+                y0 = b * rho
+                pt1 = (int(x0 + 1000*(-b)), int(y0 + 1000*(a)))
+                pt2 = (int(x0 - 1000*(-b)), int(y0 - 1000*(a)))
+                cv2.line(cdst, pt1, pt2, (0,0,255), 3, cv2.LINE_AA)
+        
+        cv2.imshow("Detected Lines (in red) - Standard Hough Line Transform", cdst)
+        #cv2.imwrite('./Results/{}-houghLines.png'.format(self.name_file), cdst)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    
     def kmeans(self):
         img = self.image
         Z = img.reshape((-1,2))
