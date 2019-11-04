@@ -4,7 +4,7 @@ import numpy as np
 from collections import deque
 from skimage import morphology
 import matplotlib.pyplot as plt
-from skimage.morphology import disk, square, cube, diamond, rectangle, ball, star
+from skimage.morphology import disk, square, star
 
 class Operations:
 
@@ -75,11 +75,11 @@ class Operations:
     
     def erosion(self):
         image = self.image
-        se = disk(5)
+        se = star(5)
         ero = morphology.erosion(image, se)
 
         self.plotResult(ero, 'Erosion')
-        #cv2.imwrite('./Results/{}-erosion.png'.format(self.name_file), ero)
+        cv2.imwrite('./Results/{}-erosion-star5.png'.format(self.name_file), ero)
 
     def morphologicalGradient(self):
         image = self.image
@@ -163,8 +163,8 @@ class Operations:
         aux = center[label.flatten()]
         result = aux.reshape((img.shape))
 
-        self.plotResult(result, 'Kmeans (K={})'.format(K))
-        cv2.imwrite('./Results/{}-kmeans-{}.png'.format(self.name_file, K), result)
+        self.plotResult(result, 'K-means (K={})'.format(K))
+        cv2.imwrite('./Results/{}-k-means-{}.png'.format(self.name_file, K), result)
 
     def houghCircles(self):
         img = self.image
