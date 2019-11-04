@@ -5,24 +5,25 @@ from Operations import Operations
 
 # Load image
 path = '../Images/'
-name_file = '3303_lg.tiff'
+#name_file = 'coins.png'
+name_file = 'cameraman.png'
+#name_file = 'pill-1.tiff'
 image = cv2.imread(path+name_file)
 
 model = Operations(image, name_file)
 #model.translation()
 #model.scaling()
 #model.rotation()
+#model.se()
 #model.dilation()
 #model.erosion()
 #model.morphologicalGradient()
-#model.kmeans()
-#model.wavelet()
-#model.fourier()
-#model.houghCircles()
-model.houghLines()
-
-
-#model.iterativeMean()
-#model.watershed()
 #model.regionGrowth()
+#model.kmeans()
+#model.houghCircles()
+#model.houghLines()
+#model.watershed()
+#model.wavelet()
+model.fourier()
+#model.iterativeMean()
 
