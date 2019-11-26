@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing
+from sklearn.preprocessing import LabelBinarizer
 
 
 class Data:
@@ -10,8 +10,8 @@ class Data:
         X = dataset.iloc[:,:-1] # remove last column
 
         # Transform classes
-        lb = preprocessing.LabelBinarizer()
+        lb = LabelBinarizer()
         lb.fit(np.unique(Y))
         Y = lb.transform(np.array(Y))
 
-        return np.array(X), Y
+        return np.array(X), Y, lb

@@ -1,25 +1,43 @@
+# -*- coding: utf-8 -*-
+# Import library
 import numpy as np
 from utils import Data
-from sklearn import metrics
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import accuracy_score, confusion_matrix
 
-X, Y = Data.numbers()
+# Import dataset
+X, Y, lb = Data.numbers()
 scores_list = []
-n_iter = 20
+n_iter = 1
 
 for i in range(n_iter):
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+    
+    # k-Fold Cross-Validation
+    #model = KNeighborsClassifier(n_neighbors=10)
+    #cv_scores = cross_val_score(model, X, Y, cv=5)
+    #scores = np.mean(cv_scores)
+    #scores_list.append(scores)
+     
+    # Holdout
+    x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
     model = KNeighborsClassifier(n_neighbors=10)
-    model.fit(X_train, Y_train)
+    model.fit(x_train, y_train)
+    y_pred = model.predict(x_test)
 
-    y_pred = model.predict(X_test)
-    scores = metrics.accuracy_score(Y_test, y_pred)
+    # Confusion matrix
+    #y_pred_inv = lb.inverse_transform(y_pred)
+    #y_test_inv = lb.inverse_transform(y_test)
+    #cm = confusion_matrix(y_pred_inv, y_test_inv)
+    #print(cm)
+
+    scores = accuracy_score(y_pred, y_test)
     scores_list.append(scores)
-
 
 acc = np.mean(scores_list)
 std = np.std(scores_list)
+
+print('Iterations: {:d}'.format(n_iter))
 print('Accuracy: {:.2f}'.format(acc*100))
 print('Minimum: {:.2f}'.format(np.amin(scores_list)*100))
 print('Maximum: {:.2f}'.format(np.amax(scores_list)*100))
