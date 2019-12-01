@@ -2,12 +2,15 @@
 # Import library
 import numpy as np
 from utils import Data
+from extraction import Extraction
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import accuracy_score, confusion_matrix
 
 # Import dataset
-X, Y, lb = Data.numbers()
+#X, Y, lb = Data.numbers()
+X, Y, lb = Extraction.huMoments()
 scores_list = []
 n_iter = 1
 
@@ -21,7 +24,8 @@ for i in range(n_iter):
      
     # Holdout
     x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
-    model = KNeighborsClassifier(n_neighbors=10)
+    model = KNeighborsClassifier(n_neighbors=30)
+    #model = MLPClassifier(hidden_layer_sizes=30)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
 
