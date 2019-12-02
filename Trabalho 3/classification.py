@@ -10,10 +10,12 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 # Import dataset
 #X, Y, lb = Data.numbers()
-X, Y, lb = Extraction.huMoments()
-scores_list = []
-n_iter = 1
+#X, Y, lb = Extraction.huMoments()
+#X, Y, lb = Extraction.lbp()
+X, Y, lb = Extraction.glcm()
 
+n_iter = 1
+scores_list = []
 for i in range(n_iter):
     
     # k-Fold Cross-Validation
