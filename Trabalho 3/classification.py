@@ -10,11 +10,11 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 # Import dataset
 #X, Y, lb = Data.numbers()
-#X, Y, lb = Extraction.huMoments()
+X, Y, lb = Extraction.huMoments()
 #X, Y, lb = Extraction.lbp()
-X, Y, lb = Extraction.glcm()
+#X, Y, lb = Extraction.glcm()
 
-n_iter = 1
+n_iter = 10
 scores_list = []
 for i in range(n_iter):
     
@@ -26,16 +26,19 @@ for i in range(n_iter):
      
     # Holdout
     x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
-    model = KNeighborsClassifier(n_neighbors=30)
-    #model = MLPClassifier(hidden_layer_sizes=30)
+    #model = KNeighborsClassifier(n_neighbors=10)
+    model = MLPClassifier(hidden_layer_sizes=(64, 128, 64),
+                          max_iter=1000,
+                          learning_rate_init=0.001)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
 
-    # Confusion matrix
-    #y_pred_inv = lb.inverse_transform(y_pred)
-    #y_test_inv = lb.inverse_transform(y_test)
-    #cm = confusion_matrix(y_pred_inv, y_test_inv)
-    #print(cm)
+    if i == 0:
+        # Confusion matrix
+        y_pred_inv = lb.inverse_transform(y_pred)
+        y_test_inv = lb.inverse_transform(y_test)
+        cm = confusion_matrix(y_pred_inv, y_test_inv)
+        print(cm)
 
     scores = accuracy_score(y_pred, y_test)
     scores_list.append(scores)
